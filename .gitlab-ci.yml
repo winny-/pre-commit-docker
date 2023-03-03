@@ -1,5 +1,5 @@
 ---
-precommit:
+pre-commit:
   stage: test
   image: registry.gitlab.com/winny/pre-commit-docker:latest
   variables:
