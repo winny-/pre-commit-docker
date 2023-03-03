@@ -1,8 +1,25 @@
 ---
 precommit:
-  image: debian:bullseye-slim
-  before_script:
-    - apt update
-    - apt install -y --no-install-recommends pre-commit
+  stage: test
+  image: registry.gitlab.com/winny/pre-commit-docker:latest
+  variables:
+    PRE_COMMIT_HOME: .pre-commit-cache
+  cache:
+    - key:
+        files: [.pre-commit-config.yaml]
+      paths: [.pre-commit-cache]
   script:
     - pre-commit run -a
+push image:
+  only:
+    - master
+  stage: deploy
+  image: docker:cli
+  services:
+    - docker:dind
+  before_script:
+    - apk add bash
+  script:
+    # https://docs.gitlab.com/ee/user/packages/container_registry/authenticate_with_container_registry.html
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - ./scripts/build-push.bash
