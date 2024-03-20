@@ -2,7 +2,7 @@
 
 ![Pipeline Status](https://gitlab.com/winny/pre-commit-docker/badges/master/pipeline.svg)
 
-I had success using `debian:bullseye` directly.  Builds seemed to take a little
+I had success using `debian:bookworm` directly.  Builds seemed to take a little
 bit longer than usual, so I created this docker image (and CI how-to notes) for
 self-consumption.  If you like this that's cool too!  Contributions welcome.
 
