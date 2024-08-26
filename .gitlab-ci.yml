@@ -7,19 +7,28 @@ pre-commit:
   cache:
     - key:
         files: [.pre-commit-config.yaml]
-      paths: [.pre-commit-cache]
+      paths: ['${PRE_COMMIT_HOME}']
   script:
     - pre-commit run -a
+build image:
+  stage: test
+  image: docker:cli
+  dependencies:
+    - pre-commit  # Don't bother building image if pre-commit fails.
+  services:
+    - docker:dind
+  script:
+    - ./scripts/build.sh
 push image:
   only:
     - master
   stage: deploy
+  dependencies:
+    - build image
   image: docker:cli
   services:
     - docker:dind
-  before_script:
-    - apk add bash
   script:
     # https://docs.gitlab.com/ee/user/packages/container_registry/authenticate_with_container_registry.html
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - ./scripts/build-push.bash
+    - ./scripts/push.sh
